@@ -15,7 +15,7 @@ Before getting started, ensure the following are installed and configured:
 * **libfranka v0.15**
 * **ROS Noetic**
 * **[Polymetis](https://github.com/facebookresearch/fairo)** (from FAIR)
-* **`mujoco_ar`** (custom AR package)
+* **[mujoco_ar](https://github.com/omarrayyann/MujocoAR)** (custom AR package)
 
 > Make sure all dependencies are correctly linked and sourced, especially libfranka with ROS.
 
