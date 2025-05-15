@@ -1,7 +1,3 @@
-Here's a clearer, more professional version of your README file:
-
----
-
 # Franka\_AR
 
 ## Overview
@@ -42,8 +38,6 @@ Before getting started, ensure the following are installed and configured:
 
 4. **Control via iPhone**
    Download and install the [MuJoCo AR app](https://apps.apple.com/ae/app/mujoco-ar/id6612039501) from the App Store. Connect it to your local setup to begin controlling the robot in AR.
-
----
 
 Special thanks to Omar Rayan for his work on MuJoCo-AR, which made this project possible.
 His contributions to AR-based robotics control are greatly appreciated.
