@@ -3,7 +3,6 @@ import zerorpc
 import scipy.spatial.transform as st
 import numpy as np
 import torch
-import socket
 from polymetis import RobotInterface, GripperInterface
 
 class FrankaInterface:
@@ -50,39 +49,31 @@ class FrankaInterface:
         return self.gripper.get_state().width
     
     def set_gripper_width(self, width):
-        # self.gripper.grasp(
-        # speed=0.3,
-        # force=2,
-        # grasp_width=width,
-        # epsilon_inner=0.05,
-        # epsilon_outer=0.05,
-        # blocking=False,
-        # )
-
+        # Optimized gripper control - using goto instead of grasp for better performance
         self.gripper.goto(width=width, speed=0.3, force=10, blocking=False)
 
     def get_joint_angles(self):
-        return self.robot.get_joint_positions().numpy().tolist()
-
-    def move_to_joint_positions(self, positions, time_to_go):
-        self.robot.move_to_joint_positions(
-            positions=torch.Tensor(positions),
-            time_to_go=time_to_go
-        )
+        """Alias for get_joint_positions for backward compatibility"""
+        return self.get_joint_positions()
 
 
-# Get all network interfaces
-interfaces = ni.interfaces()
-for iface in interfaces:
-    try:
-        # Get IPv4 address of the interface
-        addr = ni.ifaddresses(iface)[ni.AF_INET][0]['addr']
-        print(f"Interface {iface}: IP Address {addr}")
-    except KeyError:
-        # Skip interfaces without an IPv4 address
-        pass
+# Display network interfaces for debugging
+def show_network_interfaces():
+    interfaces = ni.interfaces()
+    print("Available network interfaces:")
+    for iface in interfaces:
+        try:
+            addr = ni.ifaddresses(iface)[ni.AF_INET][0]['addr']
+            print(f"  Interface {iface}: IP Address {addr}")
+        except KeyError:
+            # Skip interfaces without an IPv4 address
+            pass
 
-# Get the server's IP address
-s = zerorpc.Server(FrankaInterface())
-s.bind("tcp://0.0.0.0:4242")
-s.run() 
+if __name__ == "__main__":
+    show_network_interfaces()
+    
+    # Start the ZeroRPC server
+    print("Starting Franka interface server on port 4242...")
+    s = zerorpc.Server(FrankaInterface())
+    s.bind("tcp://0.0.0.0:4242")
+    s.run()

@@ -96,8 +96,8 @@ void recoverRobot(franka::Robot& robot) {
 double getSafeMovementTime(const std::array<double, 7>& q_start, 
                            const std::array<double, 7>& q_end,
                            double desired_time) {
-    // Using a conservative max joint velocity (rad/s)
-    const double MAX_JOINT_VELOCITY = 1.5;
+    // Configurable max joint velocity (rad/s) - increased from 1.5 for better performance
+    const double MAX_JOINT_VELOCITY = 2.0;
     
     double max_delta = 0.0;
     int critical_joint = -1;
@@ -118,7 +118,7 @@ double getSafeMovementTime(const std::array<double, 7>& q_start,
         std::cout << "WARNING: Requested time (" << desired_time << "s) is too fast!" << std::endl;
         std::cout << "Joint " << critical_joint+1 << " would need to move at " 
                   << (max_delta / desired_time) << " rad/s (limit: " << MAX_JOINT_VELOCITY << " rad/s)" << std::endl;
-        std::cout << "Automatically increasing time to " << min_safe_time << "s for safety" << std::endl;
+        std::cout << "Automatically increasing time to " << min_safe_time << "s for safety\n";
         return min_safe_time;
     }
 }
@@ -160,9 +160,11 @@ double moveJoints(franka::Robot& robot, const std::array<double, 7>& q_target, d
         std::chrono::duration<double> elapsed = end_time - start_time;
         double actual_duration = elapsed.count();
         std::cout << "Move completed! Desired: " << desired_duration 
-                  << "s, Actual: " << actual_duration << "s" << std::endl;
+                  << "s, Actual: " << actual_duration << "s\n";
+        std::cout.flush();  // Explicit flush only when needed
         
-        std::this_thread::sleep_for(std::chrono::milliseconds(300)); // Small delay for settling
+        // Reduced settling time from 300ms to 100ms for faster movements
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         
         return actual_duration;
     } catch (const franka::Exception& e) {
